@@ -1,1 +1,1 @@
-import "./gamesavingloader";
+import './gamesavingloader.js';

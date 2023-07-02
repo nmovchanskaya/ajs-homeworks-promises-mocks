@@ -1,20 +1,22 @@
 import GameSavingLoader from '../gamesavingloader.js';
 import read from '../reader.js';
 
-test('test error', async () => {
-  jest.mock('../reader.js');
+jest.mock('../reader.js');
+const orig = jest.requireActual('../reader.js');
 
-  read.mockReturnValue(() => new Promise((resolve, reject) => {
-    setTimeout(() => (() => {
+test('test error', async () => {
+  read.mockImplementation(() => new Promise((resolve, reject) => {
+    setTimeout(() => {
       reject(new Error('ooops'));
-    })(), 1000);
+    }, 1000);
   }));
 
-  const obj = await GameSavingLoader.load();
-  expect(obj).toBeNull();
+  const error = await GameSavingLoader.load();
+  expect(error).toBeInstanceOf(Error);
 });
 
 test('test', async () => {
+  read.mockImplementation(orig.default);
   const obj = await GameSavingLoader.load();
   expect(obj.id).toBe(9);
 });
